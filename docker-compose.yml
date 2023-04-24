@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  udp_receiver:
+    build: receiver/
+    ports:
+      - "5005:5005/udp"
+  web:
+    build: .
+    command: python app/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DB_HOST=db
+      - DB_NAME=mydatabase
+      - DB_USER=mydatabaseuser
+      - DB_PASSWORD=mydatabasepassword
+      - REDIS_HOST=redis
+
+  db:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongodb_data:
