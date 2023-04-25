@@ -44,6 +44,7 @@ class ScreenShotApp:
         return buffer_size
 
     def send_image(self):
+        self.save_image_locally()
         img = Image.open(self.last_image_saved)
         buf = BytesIO()
         img.save(buf, format='PNG')
@@ -90,12 +91,12 @@ class ScreenShotApp:
         elif event.type == tk.EventType.ButtonRelease:
             self.x2, self.y2 = event.x, event.y
             self.drawing = False
-
+            self.last_image_saved = self.generate_file_name()
             if self.mode == "select":
                 cropped_screenshot = self.screenshot[self.y1:self.y2, self.x1:self.x2]
-                self.last_image_saved = self.generate_file_name()
                 if cropped_screenshot.size > 0:
-                    cv2.imwrite(self.last_image_saved, cropped_screenshot)
+                    self.update_screenshot(cropped_screenshot)
+                    self.update_canvas(cropped_screenshot)
                 else:
                     print("La imagen está vacía")
 
@@ -114,17 +115,35 @@ class ScreenShotApp:
 
     def update_canvas(self, img):
         photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
+
         self.canvas.create_image(0, 0, image=photo, anchor=tk.NW)
         self.canvas.image = photo
+        # Cambiar el tamaño del canvas al de la imagen nueva
+        self.canvas.config(width=img.shape[1], height=img.shape[0])
+        # Actualizar el tamaño de la ventana
+        y = img.shape[0]
+        x = img.shape[1]
+        if img.shape[0] < 300 : 
+            y = 300
+        if img.shape[0] < 600 : 
+            x = 600
+
+        self.screenshot_window.geometry(f"{x}x{y}")
+        
+    def update_screenshot(self, img):
+        self.screenshot = img
 
     def toggle_mode(self):
         self.mode = "draw" if self.mode == "select" else "select"
 
+    def save_image_locally(self) :
+        self.last_image_saved = self.generate_file_name()
+        cv2.imwrite(self.last_image_saved, self.screenshot)
+        
     def open_screenshot_window(self):
         self.screenshot_window = tk.Toplevel(self.root)
         self.root.withdraw()
         self.screenshot_window.deiconify()
-
         self.screenshot_window.title("Captura de pantalla")
         self.screenshot_window.overrideredirect(1)
         button_frame = tk.Frame(self.screenshot_window)
@@ -135,7 +154,9 @@ class ScreenShotApp:
         zoom_out_button.pack(padx=5, pady=5)
         draw_button = tk.Button(button_frame, text="Dibujar", command=self.toggle_mode, width=10)
         draw_button.pack(padx=5, pady=5)
-        save_button = tk.Button(button_frame, text="Enviar", command=self.save_in_remote_storage, width=10)
+        send_button = tk.Button(button_frame, text="Enviar", command=self.save_in_remote_storage, width=10)
+        send_button.pack(padx=5, pady=5)
+        save_button = tk.Button(button_frame, text="Guardar", command=self.save_image_locally, width=10)
         save_button.pack(padx=5, pady=5)
         close_button = tk.Button(button_frame, text="Cerrar", command=self.close_window, width=10)
         close_button.pack(padx=5, pady=5)
