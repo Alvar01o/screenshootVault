@@ -5,6 +5,7 @@ import os
 import socket
 import struct
 import progressbar
+import time
 from dotenv import load_dotenv
 from PIL import Image, ImageTk, ImageGrab
 from datetime import datetime
@@ -113,9 +114,15 @@ class ScreenShotApp:
                 self.x1, self.y1 = self.x2, self.y2
             self.update_canvas(img_copy)
 
+    def esperar(self): 
+        # Retraso de 4 segundos
+        for i in range(4, 0, -1):
+            self.root.title(f"Esperando... {i}")
+            self.root.update()
+            time.sleep(1)
+
     def update_canvas(self, img):
         photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)))
-
         self.canvas.create_image(0, 0, image=photo, anchor=tk.NW)
         self.canvas.image = photo
         # Cambiar el tamaño del canvas al de la imagen nueva
@@ -123,10 +130,6 @@ class ScreenShotApp:
         # Actualizar el tamaño de la ventana
         y = img.shape[0]
         x = img.shape[1]
-        if img.shape[0] < 300 : 
-            y = 300
-        if img.shape[0] < 600 : 
-            x = 600
 
         self.screenshot_window.geometry(f"{x}x{y}")
         
@@ -141,9 +144,14 @@ class ScreenShotApp:
         cv2.imwrite(self.last_image_saved, self.screenshot)
         
     def open_screenshot_window(self):
+        self.esperar()
         self.screenshot_window = tk.Toplevel(self.root)
         self.root.withdraw()
         self.screenshot_window.deiconify()
+        # Configurar propiedades de la ventana
+        self.screenshot_window.wm_attributes("-topmost", True)
+        self.screenshot_window.wm_attributes("-disabled", False)
+
         self.screenshot_window.title("Captura de pantalla")
         self.screenshot_window.overrideredirect(1)
         button_frame = tk.Frame(self.screenshot_window)
