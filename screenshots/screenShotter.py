@@ -19,6 +19,7 @@ class ScreenShotApp:
         self.drawing = False
         self.screenshot = None
         self.screenshot_window = None
+        self.screenshot_button = None
         self.canvas = None
         self.mode = "select"
         self.last_image_saved = None
@@ -44,6 +45,7 @@ class ScreenShotApp:
         buffer_size = min(MAX_BUFFER_SIZE, buffer_size)
         return buffer_size
 
+
     def send_image(self):
         self.save_image_locally()
         img = Image.open(self.last_image_saved)
@@ -55,17 +57,26 @@ class ScreenShotApp:
         file_len = len(img_bytes)
         buffer_size = self.calculate_buffer_size(file_len)
 
-        print('img name :' + self.last_image_saved)
-        sock.sendto(self.last_image_saved.encode('utf-8'), (self.ip, self.port))
+        # Obtener el valor del hash SHA1
+        api_key = os.getenv('API_KEY')
+
+        # Enviar el nombre del archivo y el hash SHA1 como strings
+        file_info = f"{self.last_image_saved}|{api_key}"
+        sock.sendto(file_info.encode('utf-8'), (self.ip, self.port))
+        
+        # Enviar el tamaño de la imagen como un entero (4 bytes)
+        print(f"lenght :{file_len}")
         sock.sendto(struct.pack('<L', file_len), (self.ip, self.port))
 
         bar = progressbar.ProgressBar(max_value=file_len)
 
         for i in range(0, len(img_bytes), buffer_size):
             sock.sendto(img_bytes[i:i + buffer_size], (self.ip, self.port))
+            time.sleep(0.1)  # Espera 0.1 segundos antes de enviar el siguiente paquete
             bar.update(i)
         bar.finish()
         sock.close()
+        self.screenshot_button.config(state='normal')
 
     def capture_screenshot(self):
         self.screenshot = ImageGrab.grab()
@@ -127,11 +138,6 @@ class ScreenShotApp:
         self.canvas.image = photo
         # Cambiar el tamaño del canvas al de la imagen nueva
         self.canvas.config(width=img.shape[1], height=img.shape[0])
-        # Actualizar el tamaño de la ventana
-        y = img.shape[0]
-        x = img.shape[1]
-
-        self.screenshot_window.geometry(f"{x}x{y}")
         
     def update_screenshot(self, img):
         self.screenshot = img
@@ -144,6 +150,7 @@ class ScreenShotApp:
         cv2.imwrite(self.last_image_saved, self.screenshot)
         
     def open_screenshot_window(self):
+        self.screenshot_button.config(state='disabled')
         self.esperar()
         self.screenshot_window = tk.Toplevel(self.root)
         self.root.withdraw()
@@ -182,11 +189,14 @@ class ScreenShotApp:
     def main(self):
         self.root = tk.Tk()
         self.root.title("ScreenShot Vault")
-        self.root.geometry("300x150+100+100")
-        self.root.minsize(300, 200)
+        self.root.geometry("150x150+100+100")
+        self.root.minsize(150, 200)
         self.root.attributes("-alpha", 0.9)
-        screenshot_button = tk.Button(self.root, text="Captura", command=self.open_screenshot_window)
-        screenshot_button.pack(padx=20, pady=20)
+        self.root.wm_attributes('-toolwindow', True)
+
+
+        self.screenshot_button = tk.Button(self.root, text="Captura", command=self.open_screenshot_window)
+        self.screenshot_button.pack(padx=20, pady=20)
         self.root.mainloop()
 
 if __name__ == "__main__":
