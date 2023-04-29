@@ -8,7 +8,7 @@ def calculate_buffer_size(image_size_bytes):
     MIN_BUFFER_SIZE = 1024       # 1 KB
     MAX_BUFFER_SIZE = 32768  # 32 KB
     # Establecer un factor de relación entre el tamaño del buffer y el tamaño de la imagen
-    BUFFER_SIZE_FACTOR = 0.05    # Por ejemplo, 5% del tamaño de la imagen
+    BUFFER_SIZE_FACTOR = 0.1    # Por ejemplo, 5% del tamaño de la imagen
     
     # Calcular el tamaño del buffer en función del tamaño de la imagen y el factor de relación
     buffer_size = int(image_size_bytes * BUFFER_SIZE_FACTOR)

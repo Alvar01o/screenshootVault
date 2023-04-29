@@ -3,8 +3,10 @@ version: "3"
 services:
   udp_receiver:
     build: receiver/
+    volumes:
+      - ./receiver/vault/:/app/vault
     ports:
-      - "5005:5005/udp"
+      - "50000-50100:50000-50100/udp"
   web:
     build: .
     command: python app/manage.py runserver 0.0.0.0:8000

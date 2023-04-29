@@ -2,14 +2,10 @@ import cv2
 import numpy as np
 import tkinter as tk
 import os
-import socket
-import struct
-import progressbar
 import time
+from UDPClient import UDPClient
 from dotenv import load_dotenv
 from PIL import Image, ImageTk, ImageGrab
-from datetime import datetime
-from io import BytesIO
 
 
 class ScreenShotApp:
@@ -17,65 +13,25 @@ class ScreenShotApp:
     def __init__(self):
         self.x1, self.y1, self.x2, self.y2 = 0, 0, 0, 0
         self.drawing = False
+        self.client = UDPClient()
         self.screenshot = None
         self.screenshot_window = None
         self.screenshot_button = None
         self.canvas = None
         self.mode = "select"
-        self.last_image_saved = None
         self.root = None
-        self.ip = ''
-        self.port = ''
         self.API_KEY = os.getenv('API_KEY')
         load_dotenv()
-        self.ip = os.getenv('SERVER_IP')
-        self.port = int(os.getenv('SERVER_PORT'))
+
 
     def save_in_remote_storage(self):
         self.screenshot_window.withdraw()
         self.root.deiconify()
         self.send_image()
 
-    def calculate_buffer_size(self, image_size_bytes):
-        MIN_BUFFER_SIZE = 1024
-        MAX_BUFFER_SIZE = 32768
-        BUFFER_SIZE_FACTOR = 0.05
-        buffer_size = int(image_size_bytes * BUFFER_SIZE_FACTOR)
-        buffer_size = max(MIN_BUFFER_SIZE, buffer_size)
-        buffer_size = min(MAX_BUFFER_SIZE, buffer_size)
-        return buffer_size
-
-
     def send_image(self):
         self.save_image_locally()
-        img = Image.open(self.last_image_saved)
-        buf = BytesIO()
-        img.save(buf, format='PNG')
-        img_bytes = buf.getvalue()
-
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        file_len = len(img_bytes)
-        buffer_size = self.calculate_buffer_size(file_len)
-
-        # Obtener el valor del hash SHA1
-        api_key = os.getenv('API_KEY')
-
-        # Enviar el nombre del archivo y el hash SHA1 como strings
-        file_info = f"{self.last_image_saved}|{api_key}"
-        sock.sendto(file_info.encode('utf-8'), (self.ip, self.port))
-        
-        # Enviar el tamaño de la imagen como un entero (4 bytes)
-        print(f"lenght :{file_len}")
-        sock.sendto(struct.pack('<L', file_len), (self.ip, self.port))
-
-        bar = progressbar.ProgressBar(max_value=file_len)
-
-        for i in range(0, len(img_bytes), buffer_size):
-            sock.sendto(img_bytes[i:i + buffer_size], (self.ip, self.port))
-            time.sleep(0.1)  # Espera 0.1 segundos antes de enviar el siguiente paquete
-            bar.update(i)
-        bar.finish()
-        sock.close()
+        self.client.send_file()
         self.screenshot_button.config(state='normal')
 
     def capture_screenshot(self):
@@ -92,9 +48,6 @@ class ScreenShotApp:
         self.screenshot = cv2.resize(self.screenshot, (int(width * 0.8), int(height * 0.8)), interpolation=cv2.INTER_LINEAR)
         self.update_canvas(self.screenshot)
 
-    def generate_file_name(self):
-        d = datetime.today()
-        return d.strftime("%d_%m_%Y-%H-%M-%S") + "_screenshot.png"
 
     def on_mouse_click(self, event):
         if event.type == tk.EventType.ButtonPress:
@@ -103,7 +56,6 @@ class ScreenShotApp:
         elif event.type == tk.EventType.ButtonRelease:
             self.x2, self.y2 = event.x, event.y
             self.drawing = False
-            self.last_image_saved = self.generate_file_name()
             if self.mode == "select":
                 cropped_screenshot = self.screenshot[self.y1:self.y2, self.x1:self.x2]
                 if cropped_screenshot.size > 0:
@@ -146,8 +98,8 @@ class ScreenShotApp:
         self.mode = "draw" if self.mode == "select" else "select"
 
     def save_image_locally(self) :
-        self.last_image_saved = self.generate_file_name()
-        cv2.imwrite(self.last_image_saved, self.screenshot)
+        self.client.generate_file_name()
+        cv2.imwrite(self.client.get_last_image_saved(), self.screenshot)
         
     def open_screenshot_window(self):
         self.screenshot_button.config(state='disabled')
@@ -193,8 +145,6 @@ class ScreenShotApp:
         self.root.minsize(150, 200)
         self.root.attributes("-alpha", 0.9)
         self.root.wm_attributes('-toolwindow', True)
-
-
         self.screenshot_button = tk.Button(self.root, text="Captura", command=self.open_screenshot_window)
         self.screenshot_button.pack(padx=20, pady=20)
         self.root.mainloop()
