@@ -3,12 +3,26 @@ import socket
 import struct
 import progressbar
 import time
+import pickle
 from io import BytesIO
 from datetime import datetime
 from PIL import Image
 from dotenv import load_dotenv
+import sys
 
+# Obtener el directorio actual del script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construir la ruta del directorio superior
+parent_dir = os.path.dirname(current_dir)
+
+# Agregar la ruta del directorio superior a sys.path
+sys.path.append(parent_dir)
+
+from vault_codes.customClasses import CustomPacket
+from vault_codes.utilFunctions import calculate_buffer_size
 class UDPClient:
+
     def __init__(self) -> None:
         self.last_image_saved = None
         self.ip = ''
@@ -16,15 +30,6 @@ class UDPClient:
         load_dotenv()
         self.ip = os.getenv('SERVER_IP')
         self.port = int(os.getenv('SERVER_PORT'))
-
-    def calculate_buffer_size(self, image_size_bytes):
-        MIN_BUFFER_SIZE = 1024
-        MAX_BUFFER_SIZE = 32768
-        BUFFER_SIZE_FACTOR = 0.1
-        buffer_size = int(image_size_bytes * BUFFER_SIZE_FACTOR)
-        buffer_size = max(MIN_BUFFER_SIZE, buffer_size)
-        buffer_size = min(MAX_BUFFER_SIZE, buffer_size)
-        return buffer_size
     
     def set_last_image_saved(self, image_name):
         self.last_image_saved = image_name
@@ -44,7 +49,7 @@ class UDPClient:
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         file_len = len(img_bytes)
-        buffer_size = self.calculate_buffer_size(file_len)
+        buffer_size = calculate_buffer_size(file_len)
 
         # Obtener el valor del hash SHA1
         api_key = os.getenv('API_KEY')
@@ -60,7 +65,10 @@ class UDPClient:
         bar = progressbar.ProgressBar(max_value=file_len)
 
         for i in range(0, len(img_bytes), buffer_size):
-            sock.sendto(img_bytes[i:i + buffer_size], (self.ip, self.port))
+            chunk = img_bytes[i:i + buffer_size]
+            packet = CustomPacket(i, chunk)
+            serialized_packet = pickle.dumps(packet)
+            sock.sendto(serialized_packet, (self.ip, self.port))
             time.sleep(0.1)  # Espera 0.1 segundos antes de enviar el siguiente paquete
             bar.update(i)
         bar.finish()

@@ -10,11 +10,11 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el script del servidor
-COPY udp_receiver.py .
-COPY utilFunctions.py .
+COPY main.py .
+COPY ./vault_codes/ ./vault_codes/
 COPY .env .
 # Exponer el puerto 5005 para el servidor UDP
 EXPOSE 5005/udp
 
 # Ejecutar el script del servidor
-CMD ["python", "udp_receiver.py"]
+CMD ["python", "main.py"]

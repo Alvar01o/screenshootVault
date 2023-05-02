@@ -7,6 +7,8 @@ from UDPClient import UDPClient
 from dotenv import load_dotenv
 from PIL import Image, ImageTk, ImageGrab
 
+import sys
+sys.path.append('.')
 
 class ScreenShotApp:
 

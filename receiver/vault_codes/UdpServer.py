@@ -1,0 +1,115 @@
+import socket
+import struct
+
+import os
+import pickle
+from io import BytesIO
+from PIL import Image
+
+import sys
+# Obtener el directorio actual del script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construir la ruta del directorio superior
+parent_dir = os.path.dirname(current_dir)
+
+# Agregar la ruta del directorio superior a sys.path
+sys.path.append(parent_dir)
+
+
+from vault_codes.utilFunctions import calculate_buffer_size, custom_progress_bar
+
+
+class UDPServer:
+    #token de indice
+    
+    def __init__(self, ip, port, image_dir, logger, UdpInfo):
+        self.ip = ip
+        self.logger = logger
+        self.port = port
+        self.info = UdpInfo
+        self.image_dir = image_dir
+        self.buffer_size = 0
+        self.img_len = 0
+        self.img_bytes = bytearray()
+
+    @property
+    def buffer_size(self):
+        return self._buffer_size
+    
+    @buffer_size.setter
+    def buffer_size(self, valor):
+        self.info.buffer_size = valor
+        self._buffer_size = valor
+
+
+    @property
+    def img_len(self):
+        return self._img_len
+    
+    @img_len.setter
+    def img_len(self, valor):
+        self.info.img_length = valor
+        self._img_len = valor
+
+    @property
+    def image_dir(self):
+        return self._image_dir
+    
+    @image_dir.setter
+    def image_dir(self, valor):
+        self.info.file_name = valor
+        self._image_dir = valor
+
+    def set_logging(self, logger):
+        self.logger = logger
+
+    def receive_image(self):
+        self.logger.info('Receiving image.')
+        # Crear un socket UDP
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 64 * 1024)
+        sock.bind((self.ip, self.port))
+
+        file_info, _ = sock.recvfrom(4096)
+        file_name, received_hash_sha1 = file_info.decode('utf-8').split('|')
+
+        self.logger.info(f"user and file: {file_name}, {received_hash_sha1}")
+
+        # Recibir el tamaño de la imagen como un entero (4 bytes)
+        data, _ = sock.recvfrom(4)
+        self.img_len = struct.unpack('<L', data)[0]
+
+        self.logger.info(f"Total image size: {self.img_len} bytes")
+
+        self.buffer_size = calculate_buffer_size(self.img_len)
+
+        # Recibir la imagen en paquetes de buffer_size bytes
+        self.img_bytes = bytearray()
+        received_size = 0
+        self.info.package_amount = self.img_len / self.buffer_size
+        while len(self.img_bytes) < self.img_len:
+
+            # Recibir paquete serializado y deserializarlo
+            serialized_packet, _ = sock.recvfrom(4096)
+            packet = pickle.loads(serialized_packet)
+            # Agregar datos de imagen al bytearray
+            self.img_bytes.extend(packet.data)
+            received_size += len(packet.data)
+            progress = received_size / self.img_len
+            progress_bar = custom_progress_bar(progress)
+            self.logger.info(f"Progress: {progress * 100:.2f}% {progress_bar}")
+
+        # Cerrar el socket
+        self.logger.info('closing socket.')
+        sock.close()
+        # Convertir el array de bytes en una imagen y guardarla
+        img = Image.open(BytesIO(self.img_bytes))
+        # Guardar la imagen en un archivo
+        # Si el directorio no existe, se crea
+        if not os.path.exists(self.image_dir):
+            os.makedirs(self.image_dir)
+        if not os.path.exists(os.path.join(self.image_dir, received_hash_sha1)):
+            os.makedirs(os.path.join(self.image_dir, received_hash_sha1))
+        img.save(os.path.join(self.image_dir, received_hash_sha1, file_name))
+
