@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import tkinter as tk
+from tkinter import ttk
 import os
 import time
 from UDPClient import UDPClient
@@ -146,6 +147,7 @@ class ScreenShotApp:
         self.root.geometry("150x150+100+100")
         self.root.minsize(150, 200)
         self.root.attributes("-alpha", 0.9)
+        self.root.wm_attributes("-disabled", False)
         self.root.wm_attributes('-toolwindow', True)
         self.screenshot_button = tk.Button(self.root, text="Captura", command=self.open_screenshot_window)
         self.screenshot_button.pack(padx=20, pady=20)

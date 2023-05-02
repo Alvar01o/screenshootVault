@@ -21,6 +21,7 @@ class Runner:
         pass
     def getudpConnectionList():
         return Runner.udpConnectionList
+    
 if __name__ == "__main__":
     load_dotenv()
     ip = os.getenv("SERVER_IP")
@@ -35,3 +36,4 @@ if __name__ == "__main__":
         logging.info(f'Starting server udp on port: {port}')
         t = threading.Thread(target=server.receive_image)
         t.start()
+    

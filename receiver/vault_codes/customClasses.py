@@ -42,3 +42,6 @@ class UdpInfo:
     @package_amount.setter
     def package_amount(self, valor):
         self._package_amount = valor
+
+    def __str__(self):
+        return f"UdpInfo(file_name={self.file_name}, buffer_size={self.buffer_size}, package_amount={self.package_amount}, img_length={self.img_length})"
