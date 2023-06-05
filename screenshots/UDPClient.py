@@ -19,11 +19,12 @@ parent_dir = os.path.dirname(current_dir)
 # Agregar la ruta del directorio superior a sys.path
 sys.path.append(parent_dir)
 
-from vault_codes.customClasses import CustomPacket
+from vault_codes.customClasses import CustomPacket, UdpInfo
 from vault_codes.utilFunctions import calculate_buffer_size
 class UDPClient:
 
     def __init__(self) -> None:
+        self.udp_info = UdpInfo()
         self.last_image_saved = None
         self.ip = ''
         self.port = ''
@@ -48,11 +49,15 @@ class UDPClient:
         img_bytes = buf.getvalue()
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         file_len = len(img_bytes)
+        self.udp_info.img_length = file_len
         buffer_size = calculate_buffer_size(file_len)
+        self.udp_info.buffer_size = buffer_size
+        self.udp_info.package_amount = round(file_len/buffer_size)
         # Obtener el valor del hash SHA1
         api_key = os.getenv('API_KEY')
         # Enviar el nombre del archivo y el hash SHA1 como strings
         file_info = f"{self.get_last_image_saved()}|{api_key}"
+        self.udp_info.file_name = self.get_last_image_saved()
         sock.sendto(file_info.encode('utf-8'), (self.ip, self.port))
         # Enviar el tamaño de la imagen como un entero (4 bytes)
         sock.sendto(struct.pack('<L', file_len), (self.ip, self.port))

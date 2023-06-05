@@ -36,7 +36,9 @@ class ScreenShotApp:
         self.save_image_locally()
         self.client.send_file()
         self.screenshot_button.config(state='normal')
-
+        self.screenshot_window.withdraw()
+        self.root.deiconify()
+        
     def capture_screenshot(self):
         self.screenshot = ImageGrab.grab()
         return cv2.cvtColor(np.array(self.screenshot), cv2.COLOR_RGB2BGR)
