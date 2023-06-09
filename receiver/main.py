@@ -24,18 +24,36 @@ class Runner:
 
     def getudpConnectionList():
         return Runner.udpConnectionList
-    
-def signal_handler(sig, frame):
-    print("Programa terminado.")
-    UdpInfo.exit_flag = 1
+servers = []
 
+def stopServers():
+    for server in servers:  # Assuming 'servers' is a list of your UDPServer instances
+        if server.is_alive():
+            server.stop()
+    logging.info('All servers stopped.')
+
+def startServer():
+    for server in servers:  # Assuming 'servers' is a list of your UDPServer instances
+        server.start()
+    logging.info('All servers started.')
+
+def signal_handler(sig, frame):
+    logging.info('Stopping servers..')
+    # Stop each server
+    for server in servers:  # Assuming 'servers' is a list of your UDPServer instances
+        if server.is_alive():
+            server.stop()
+    logging.info('All servers stopped.')
+    sys.exit(0)  # exit the program
+ 
 if __name__ == "__main__":
     load_dotenv()
+    signal.signal(signal.SIGINT, signal_handler)
     ip = os.getenv("SERVER_IP")
     min_port = int(os.getenv("MIN_PORT"))
     max_port = int(os.getenv("MAX_PORT"))
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    logging.info('Starting server udp..')
+    logging.info('Starting udp Services.')
     image_dir = os.getenv("IMAGE_DIR")
     for port in range(min_port, max_port + 1):
         signal.signal(signal.SIGINT, signal_handler) #check
@@ -46,5 +64,19 @@ if __name__ == "__main__":
         server = UDPServer(ip, port, image_dir, logging.getLogger('udpLogger'), Runner.udpConnectionList[port])
         logging.info(f'Starting server udp on port: {port}')
         t = threading.Thread(target=server.receive_image)
+        t.daemon = True
         t.start()
+        servers.append(server)
+#        t.join(60) #hilo vivira por 1 minuto.
+    command = None 
+    while command != 'exit' : 
+        command = input()
+        if command == 'stop-all':
+            stopServers()
+
+    
+
+    #verificar el estado de los hilos.
+    #si estan muertos revivirlos
+    
     

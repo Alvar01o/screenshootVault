@@ -1,7 +1,9 @@
 #represent th port status and file receiver
 class TransferInfo:
-    BUSY = False
-    AVAILABLE = True
+    BUSY = 0
+    AVAILABLE = 1
+    DEAD = 2
+    
     def __init__(self, status, udpInfo):
         self.status = status
         self.udpInfo = udpInfo
