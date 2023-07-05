@@ -10,25 +10,22 @@ from PIL import Image
 from dotenv import load_dotenv
 import sys
 
-# Obtener el directorio actual del script
 current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Construir la ruta del directorio superior
 parent_dir = os.path.dirname(current_dir)
-
-# Agregar la ruta del directorio superior a sys.path
+# add parent dir to sys.path
 sys.path.append(parent_dir)
 
 from vault_codes.customClasses import CustomPacket, UdpInfo
 from vault_codes.utilFunctions import calculate_buffer_size
+
 class UDPClient:
 
     def __init__(self) -> None:
+        load_dotenv()
         self.udp_info = UdpInfo()
         self.last_image_saved = None
         self.ip = ''
         self.port = ''
-        load_dotenv()
         self.ip = os.getenv('SERVER_IP')
         self.port = int(os.getenv('SERVER_PORT'))
     
@@ -64,11 +61,13 @@ class UDPClient:
         bar = progressbar.ProgressBar(max_value=file_len)
         for i in range(0, len(img_bytes), buffer_size):
             chunk = img_bytes[i:i + buffer_size]
+            print(i)
             packet = CustomPacket(i, chunk)
             serialized_packet = pickle.dumps(packet)
             # Enviar el tamaño del objeto serializado
             serialized_packet_size = len(serialized_packet)
             sock.sendto(struct.pack('<L', serialized_packet_size), (self.ip, self.port))
+            #enviar el objeto
             sock.sendto(serialized_packet, (self.ip, self.port))
             time.sleep(0.1)  # Espera 0.1 segundos antes de enviar el siguiente paquete
             bar.update(i)
