@@ -24,6 +24,19 @@ class Runner:
 
     def getudpConnectionList():
         return Runner.udpConnectionList
+    
+    @staticmethod
+    def checkPort(port):
+        if port in Runner.udpConnectionList:
+            print(Runner.udpConnectionList[port])
+        else :
+            print("Port not used.")
+
+    @staticmethod
+    def checkPorts():
+        for k, v in Runner.udpConnectionList.items():
+            print(f"{k} : {v}")
+
 servers = []
 
 def stopServers():
@@ -41,8 +54,7 @@ def signal_handler(sig, frame):
     logging.info('Stopping servers..')
     # Stop each server
     for server in servers:  # Assuming 'servers' is a list of your UDPServer instances
-        if server.is_alive():
-            server.stop()
+        server.stop()
     logging.info('All servers stopped.')
     sys.exit(0)  # exit the program
  
@@ -73,7 +85,9 @@ if __name__ == "__main__":
         command = input()
         if command == 'stop-all':
             stopServers()
-
+        if command == 'check-ports':
+            Runner.checkPorts()
+        
     
 
     #verificar el estado de los hilos.
