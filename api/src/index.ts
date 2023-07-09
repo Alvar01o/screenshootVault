@@ -12,7 +12,7 @@ if (!process.env.MONGO_URI) {
 }
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI as string)
-    .then(() => console.log('Connected to MongoDB'))
+    .then()
     .catch((error) => console.log(error));
 
 app.use(express.json());
@@ -23,3 +23,4 @@ app.use('/api/users', userRouter);
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+export default app;
