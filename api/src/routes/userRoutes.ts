@@ -136,17 +136,36 @@ router.post(
 );
 
 // Ruta para obtener los datos del usuario autenticado
-router.get('/me', async (req, res) => {
-    const token = req.headers['authorization']?.split(' ')[1];
-    const payload = verifyToken(token as string);
-    if (typeof payload === 'string' || payload === null) {
-        return res.status(401).json('Unauthorized');
+router.get('/data', async (req: Request, res: Response) => {
+    // Extraer el token de la cabecera de autorización
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.sendStatus(401); // Si no hay token, retornar un error 401 (No autorizado)
     }
-    const user = await User.findById(payload.id);
-    if (!user) {
-        return res.status(404).json('User not found');
+    
+    try {
+        const payload = verifyToken(token); // Verificar el token
+        if (typeof payload === 'string' || payload === null) {
+            return res.sendStatus(403); // Si el payload es una string o null, retornar un error 403 (Prohibido)
+        }
+
+        const user: IUser | null = await User.findById(payload.user.id); // Buscar al usuario en la base de datos utilizando el id del payload
+
+        if (!user) {
+            return res.sendStatus(404); // Si no se encuentra al usuario, retornar un error 404 (No encontrado)
+        }
+
+        // Retornar los datos del usuario (excepto la contraseña)
+        return res.json({
+            email: user.email,
+            // Otras propiedades del usuario que quieras retornar...
+        });
+    } catch (err: any) {
+        console.error(err.message);
+        return res.sendStatus(403); // Si algo falla (p.ej. el token es inválido), retornar un error 403 (Prohibido)
     }
-    res.json(user);
 });
 
 export { router as userRouter };
