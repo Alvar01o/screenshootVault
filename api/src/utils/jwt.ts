@@ -7,7 +7,7 @@ export const generateToken = (userId: string) => {
 export const verifyToken = (token: string) => {
     try {
         return jwt.verify(token, 'mysecretkey');
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         return null;
     }

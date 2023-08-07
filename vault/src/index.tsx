@@ -1,15 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import SignIn from './Sign-in';
 import reportWebVitals from './reportWebVitals';
+import {IUser} from './interfaces'
+
+const initializeUser: IUser = {
+  name: '',
+  email: '',
+}
+
+const loggerUser = React.createContext<IUser>(initializeUser)
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 root.render(
   <React.StrictMode>
-    <App />
+    <SignIn />
   </React.StrictMode>
 );
 

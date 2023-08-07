@@ -13,6 +13,7 @@ describe('POST /api/users/register', () => {
                 email: rand_email,
                 password: psw,
             });
+        console.log(response.body)
         expect(response.statusCode).toEqual(200);
         expect(response.body.email).toEqual(rand_email);
         // etc.

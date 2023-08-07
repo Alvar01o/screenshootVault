@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Grid from 'gridfs-stream';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Crear la conexión a GridFS
 const conn = mongoose.createConnection(process.env.MONGO_URI as string);
@@ -16,7 +18,7 @@ const router = Router();
 
 // Endpoint para listar los archivos
 router.get('/files', (req: Request, res: Response) => {
-  gfs.files.find().toArray((err:any, files:any) => {
+  gfs.files.find().toArray((err: any, files: any) => {
     if (!files || files.length === 0) {
       return res.status(404).json({
         err: 'No files exist'
@@ -30,7 +32,7 @@ router.get('/files', (req: Request, res: Response) => {
 
 // Endpoint para obtener un archivo específico
 router.get('/files/:filename', (req: Request, res: Response) => {
-  gfs.files.findOne({ filename: req.params.filename }, (err:any, file:any) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err: any, file: any) => {
     if (!file || file.length === 0) {
       return res.status(404).json({
         err: 'No file exists'

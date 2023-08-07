@@ -3,8 +3,11 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { userRouter } from './routes/userRoutes';
 import { fileRouter } from './routes/fileRoutes';
+import cors from 'cors';
 
 const app = express();
+
+
 const port = process.env.PORT || 3000;
 dotenv.config();
 if (!process.env.MONGO_URI) {
@@ -16,7 +19,9 @@ mongoose.connect(process.env.MONGO_URI as string)
     .catch((error) => console.log(error));
 
 app.use(express.json());
-
+app.use(cors({
+    origin: process.env.FRONT_END_URL
+}));
 // Rutas
 app.use('/api/users', userRouter);
 app.use('/api/files', fileRouter);
