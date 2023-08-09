@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ILoginUser } from './interfaces'
+import { ILoginUser, ILoginResponse } from './interfaces'
 
 const API_URL = 'http://localhost:3001'
 
@@ -9,10 +9,12 @@ export const logIng = async (user: ILoginUser) => {
             email: user.email,
             password: user.password
         });
-        console.log(response)
-        // Suponiendo que el endpoint devuelve un token cuando el login es exitoso
-        const token = response.data.token;
-        return token;
+        let loginResponse: ILoginResponse = {
+            token: response.data.token,
+            email: response.data.email,
+            name: response.data.name
+        }
+        return loginResponse;
     } catch (error) {
         console.log(error)
     }

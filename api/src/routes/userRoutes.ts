@@ -98,16 +98,16 @@ router.post(
                     .json({ errors: [{ msg: 'Invalid Credentials' }] });
             }
             const isMatch = await bcrypt.compare(password, user.password);
-
             if (!isMatch) {
                 return res
                     .status(400)
                     .json({ errors: [{ msg: 'Invalid Credentials' }] });
             }
-
             const payload = {
                 user: {
-                    id: user.id
+                    id: user.id,
+                    email: user.email,
+                    name:user.name
                 }
             };
 
@@ -117,7 +117,7 @@ router.post(
                 { expiresIn: 360000 },
                 (err, token) => {
                     if (err) throw err;
-                    res.json({ token });
+                    res.json({ token, user: payload.user });
                 }
             );
         } catch (err) {

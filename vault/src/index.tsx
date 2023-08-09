@@ -3,14 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import SignIn from './Sign-in';
 import reportWebVitals from './reportWebVitals';
-import {IUser} from './interfaces'
-
-const initializeUser: IUser = {
-  name: '',
-  email: '',
-}
-
-const loggerUser = React.createContext<IUser>(initializeUser)
+import { UserContextProvider } from './components/UserContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -18,7 +11,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <SignIn />
+    <UserContextProvider>
+      <SignIn />
+    </UserContextProvider>
   </React.StrictMode>
 );
 

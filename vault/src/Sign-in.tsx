@@ -14,6 +14,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { logIng } from './Actions';
 import { ILoginUser } from './interfaces';
+import { UserContext } from './components/UserContext';
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -38,11 +39,9 @@ export default function SignIn() {
             email: data.get('email') || '',
             password: data.get('password') || '',
         }
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-        logIng(user)
+        let token = logIng(user)
+        const user_data = React.useContext(UserContext)
+        console.log(user_data)
     };
 
     return (
