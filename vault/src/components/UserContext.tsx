@@ -8,6 +8,7 @@ const initializeUser: IUser = {
 
 interface IState {
   user: IUser;
+  //add more data here
 }
 
 interface IProps {

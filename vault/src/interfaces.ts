@@ -6,6 +6,10 @@ export interface ILoginUser {
     email: FormDataEntryValue,
     password: FormDataEntryValue
 }
+export interface ILoginFailed {
+    token: boolean,    
+}
+
 export interface ILoginResponse {
     token: string,
     email: string,

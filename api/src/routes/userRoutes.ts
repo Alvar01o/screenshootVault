@@ -4,13 +4,8 @@ import { User, IUser } from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express-serve-static-core';
-
+import { verifyToken, authMiddleware } from '../middlewares/authMiddleware';
 const router = Router();
-
-// middleware para verificar el token
-const verifyToken = (token: string): string | jwt.JwtPayload => {
-    return jwt.verify(token, process.env.JWT_SECRET as string);
-};
 
 // Ruta de registro
 router.post(
@@ -132,7 +127,7 @@ router.post(
 );
 
 // Ruta para obtener los datos del usuario autenticado
-router.get('/data', async (req: Request, res: Response) => {
+router.get('/data', authMiddleware, async (req: Request, res: Response) => {
     // Extraer el token de la cabecera de autorización
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -146,9 +141,7 @@ router.get('/data', async (req: Request, res: Response) => {
         if (typeof payload === 'string' || payload === null) {
             return res.sendStatus(403); // Si el payload es una string o null, retornar un error 403 (Prohibido)
         }
-
         const user: IUser | null = await User.findById(payload.user.id); // Buscar al usuario en la base de datos utilizando el id del payload
-
         if (!user) {
             return res.sendStatus(404); // Si no se encuentra al usuario, retornar un error 404 (No encontrado)
         }

@@ -40,8 +40,8 @@ export default function SignIn() {
             password: data.get('password') || '',
         }
         let token = logIng(user)
-        const user_data = React.useContext(UserContext)
-        console.log(user_data)
+//        const user_data = React.useContext(UserContext)
+//        console.log(user_data)
     };
 
     return (

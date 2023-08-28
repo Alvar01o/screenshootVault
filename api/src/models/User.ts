@@ -1,5 +1,10 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+export interface currentuser {
+    id: string;
+    email: string;
+    name: string;
+}
 export interface IUser extends Document {
     name: string;
     email: string;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ILoginUser, ILoginResponse } from './interfaces'
+import { ILoginUser, ILoginResponse, ILoginFailed } from './interfaces'
 
 const API_URL = 'http://localhost:3001'
 
@@ -16,6 +16,9 @@ export const logIng = async (user: ILoginUser) => {
         }
         return loginResponse;
     } catch (error) {
-        console.log(error)
+        let loginResponse: ILoginFailed = {
+            token: false
+        }
+        return loginResponse;
     }
 }

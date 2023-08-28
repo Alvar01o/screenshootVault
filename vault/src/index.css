@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.files_container {
+  max-width: 95% !important;
+  padding-top: 2%;
+}
