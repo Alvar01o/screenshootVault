@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
 import SignIn from "./Sign-in";
 import reportWebVitals from "./reportWebVitals";
-
+import Home from "./Home";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -17,6 +16,6 @@ const isLogged = () => {
     return false;
   }
 };
-root.render(<main>{isLogged() ? <h1>Logged</h1> : <SignIn />}</main>);
+root.render(<main>{isLogged() ? <Home></Home> : <SignIn />}</main>);
 
 reportWebVitals();

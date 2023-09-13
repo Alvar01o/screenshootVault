@@ -1,7 +1,7 @@
 import * as React from "react";
 import { logIng } from "./Actions";
 import { ILoginUser } from "./interfaces";
-
+import "./Sign-in.css";
 export default function SignIn() {
 
     //add reducers for validations
