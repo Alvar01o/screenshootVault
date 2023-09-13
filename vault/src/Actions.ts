@@ -9,16 +9,17 @@ export const logIng = async (user: ILoginUser) => {
             email: user.email,
             password: user.password
         });
+
         let loginResponse: ILoginResponse = {
             token: response.data.token,
-            email: response.data.email,
-            name: response.data.name
+            email: response.data.user.email,
+            name: response.data.user.name,
+            id: response.data.user.id
         }
-        return loginResponse;
+        localStorage.setItem('user', JSON.stringify(loginResponse));
+        return true;
     } catch (error) {
-        let loginResponse: ILoginFailed = {
-            token: false
-        }
-        return loginResponse;
+        console.log(error)
+        return false;
     }
 }

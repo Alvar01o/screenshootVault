@@ -13,5 +13,6 @@ export interface ILoginFailed {
 export interface ILoginResponse {
     token: string,
     email: string,
-    name: string
+    name: string,
+    id: string
 }

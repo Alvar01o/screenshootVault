@@ -50,38 +50,6 @@ describe('GET /api/users/data', () => {
         expect(response.statusCode).toEqual(200);
         expect(response.body.email).toEqual(rand_email);
     });
-
-
-    //    it('should return a 401 error for unauthenticated user', async () => {
-    //        // Make a request to the /data endpoint without a JWT token
-    //        const res = await request(app).get('/data');
-    //    
-    //        // Expect the response to have a 401 status code
-    //        expect(res.status).toEqual(401);
-    //      });
-    //    
-    //      it('should return a 404 error for non-existent user', async () => {
-    //        // Sign a JWT token for a non-existent user
-    //        const token = signToken({ user: { id: '456' } });
-    //    
-    //        // Make a request to the /data endpoint with the JWT token
-    //        const res = await request(app)
-    //          .get('/data')
-    //          .set('Authorization', `Bearer ${token}`);
-    //    
-    //        // Expect the response to have a 404 status code
-    //        expect(res.status).toEqual(404);
-    //      });
-    //    
-    //      it('should return a 403 error for invalid token', async () => {
-    //        // Make a request to the /data endpoint with an invalid JWT token
-    //        const res = await request(app)
-    //          .get('/data')
-    //          .set('Authorization', 'Bearer invalid_token');
-    //    
-    //        // Expect the response to have a 403 status code
-    //        expect(res.status).toEqual(403);
-    //      });
 });
 
 describe('POST /api/files/add', () => {
@@ -90,10 +58,8 @@ describe('POST /api/files/add', () => {
             .post('/api/files/add')
             .attach('file', './__tests__/testFiles/test.txt')
             .set('Authorization', `Bearer ${token}`);
-            console.log(res.error)
         expect(res.status).toEqual(200);
         expect(res.body).toHaveProperty('file');
         expect(res.body.file).toHaveProperty('filename', 'test.txt');
     });
 });
-// Similarmente, puedes escribir pruebas para otras rutas

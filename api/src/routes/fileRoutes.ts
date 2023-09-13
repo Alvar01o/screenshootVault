@@ -54,7 +54,6 @@ router.get('/files/:filename', authMiddleware, (req: Request, res: Response) => 
 const storage = new GridFsStorage({
   url: process.env.MONGO_URI as string,
   file: (req: any, file: any) => {
-    console.log(currentUser)
     return {
       filename: file.originalname,
       metadata: {
@@ -67,7 +66,6 @@ const storage = new GridFsStorage({
 const upload = multer({ storage });
 
 router.post('/add', authMiddleware, upload.single('file'), (req: Request, res: Response) => {
-  console.log('file uploaded', req.file);
   res.json({ file: req.file });
 });
 
