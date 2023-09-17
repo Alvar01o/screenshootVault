@@ -1,19 +1,19 @@
 import * as React from "react";
-import { logIng } from "./Actions";
+import { login } from "./Actions";
 import { ILoginUser } from "./interfaces";
 import "./Sign-in.css";
-export default function SignIn() {
-
+export default function SignIn(props: any) {
     //add reducers for validations
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     let user: ILoginUser = {
       email: data.get("email") || "",
       password: data.get("password") || "",
     };
-    logIng(user);
+    let response:boolean = await login(user);
+    props.onUpdateStatus(response);
+
   };
 
 

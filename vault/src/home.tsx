@@ -1,22 +1,26 @@
 import React, { Component } from "react";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
+import FloatingUploadButton from "./components/FloatingUploadButton";
+import MainComponent from "./components/MainComponent"; 
+import ImageCard from "./components/ImageCard";
 interface Props {}
 interface State {}
 
 
 class Home extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
 
   render() {
     return (
-      <section>
+      <>
         <Header></Header>
-        <main></main>
+        <FloatingUploadButton></FloatingUploadButton>
+        <MainComponent>
+          <ImageCard></ImageCard>
+        </MainComponent>
         <Footer></Footer>
-      </section>
+
+      </>
     );
   }
 }

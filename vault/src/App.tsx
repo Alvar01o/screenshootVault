@@ -1,25 +1,26 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect} from 'react';
 import './App.css';
-
+import Home from "./Home";
+import SignIn from "./Sign-in";
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const user: string | null = localStorage.getItem("user");
+  const realUserInformation = JSON.parse(user || "{}");
+
+  useEffect(() => {
+    if (realUserInformation?.token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [isLoggedIn]); 
+  const onUpdateStatus = (status: boolean) => {
+    setIsLoggedIn(status);
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    {isLoggedIn ? <Home></Home> : <SignIn onUpdateStatus={onUpdateStatus}/>}
+    </>
   );
 }
 

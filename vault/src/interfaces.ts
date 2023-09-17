@@ -7,7 +7,7 @@ export interface ILoginUser {
     password: FormDataEntryValue
 }
 export interface ILoginFailed {
-    token: boolean,    
+    msg: boolean,    
 }
 
 export interface ILoginResponse {
