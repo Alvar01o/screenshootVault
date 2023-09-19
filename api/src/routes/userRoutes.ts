@@ -116,11 +116,6 @@ router.post(
                 }
             );
         } catch (err) {
-            if (err instanceof Error) {
-                console.error(err.message);
-            } else {
-                console.error(err);
-            }
             res.status(500).send('Server error');
         }
     }

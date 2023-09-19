@@ -16,7 +16,7 @@ if (!process.env.MONGO_URI) {
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI as string)
     .then()
-    .catch((error) => console.log(error));
+    .catch((error) => console.log(error)); 
 
 app.use(express.json());
 app.use(cors({
