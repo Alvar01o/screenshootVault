@@ -1,0 +1,22 @@
+.floating-upload-button {
+    position: sticky;
+    bottom: 0;
+    align-self: flex-end;
+    z-index: 2;
+}
+div.floating-upload-button button {
+    padding: 0.25rem;
+    border-radius: 50%;
+    background-color: #7AC943;
+    border: 2px solid #7AC943;
+
+}
+svg#upload {
+    min-width: 47px;
+    fill: white;
+}
+.rightPanel {
+    right: 15px;
+    display: flex;
+    position: absolute;
+}

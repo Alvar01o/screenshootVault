@@ -1,0 +1,36 @@
+import React, {useState} from "react";
+import "./FloatingUploadButton.css";
+import { ReactComponent as UploadLogo } from "./upload.svg";
+
+const FloatingUploadButton = () => {
+  const [style, setStyle] = useState({ logoHeight:  document.body.offsetHeight + (document.querySelector('header')?.offsetHeight ?? 0) });
+  const clickHandler = () => {
+    //show form in side section of page with neccesary to upload file
+    console.log("click");
+  };
+
+  const handleScroll = () => {
+    let scrollTop = window.scrollY,
+      minHeight =
+        document.body.offsetHeight -
+        (document.querySelector("header")?.offsetHeight ?? 0),
+      logoHeight = Math.max(
+        minHeight,
+        document.body.scrollHeight -
+          scrollTop -
+          (document.querySelector("header")?.offsetHeight ?? 0)
+      );
+        setStyle({ logoHeight });
+  };
+
+  return (
+    <div className="rightPanel" style={{ height: style.logoHeight }}>
+      <div className="floating-upload-button" onClick={clickHandler}>
+        <button>
+          <UploadLogo />
+        </button>
+      </div>
+    </div>
+  );
+};
+export default FloatingUploadButton;

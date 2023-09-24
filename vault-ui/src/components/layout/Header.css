@@ -1,0 +1,29 @@
+header {
+  border-bottom: 1px solid rgb(20 24 36 / 39%);
+  display: flex;
+  justify-content: space-between;
+  max-height: 40px;
+  padding-bottom: 2rem;
+  min-width: 100%;
+  margin-top: 0rem;
+  background-color: white;
+}
+
+svg#person {
+  width: 40px;
+}
+.profile {
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+}
+.profile svg {
+  align-items: center;
+}
+header nav.nav-menu {
+  margin-bottom: 0rem;
+  align-items: normal;
+}
+.logo {
+  align-self: center;
+}
