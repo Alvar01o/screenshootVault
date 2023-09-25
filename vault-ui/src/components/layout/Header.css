@@ -3,12 +3,17 @@ header {
   display: flex;
   justify-content: space-between;
   max-height: 40px;
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
+  padding-top: 2rem !important;
   min-width: 100%;
   margin-top: 0rem;
   background-color: white;
 }
-
+.header-content {
+  display: flex;
+  min-width: 80%;
+  justify-content: unset;
+}
 svg#person {
   width: 40px;
 }
@@ -26,4 +31,21 @@ header nav.nav-menu {
 }
 .logo {
   align-self: center;
+}
+.profile-options {
+  list-style: none;
+  position: absolute;
+  top: 73px;
+  background-color: rgb(20, 24, 36);
+  color: white;
+}
+.profile-options > ul {
+  cursor: pointer;
+}
+.profile ul {
+  list-style-type: none;
+  padding: 0rem 2.2rem;
+}
+nav ul {
+  margin: 0rem;
 }

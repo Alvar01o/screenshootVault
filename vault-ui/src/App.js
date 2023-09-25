@@ -5,7 +5,7 @@ import SignIn from "./Sign-in";
 import AuthContext from "./store/auth-context";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState();
-  const user= localStorage.getItem("user");
+  const user = localStorage.getItem("user");
   const realUserInformation = JSON.parse(user || "{}");
 
   useEffect(() => {
@@ -14,13 +14,19 @@ function App() {
     } else {
       setIsLoggedIn(false);
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, realUserInformation?.token]);
+  const onLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem("user");
+  };
   const onUpdateStatus = (status) => {
     setIsLoggedIn(status);
   };
   return (
     <>
-      <AuthContext.Provider value={isLoggedIn}>
+      <AuthContext.Provider
+        value={{ isLoggedIn: isLoggedIn, onLogout: onLogout }}
+      >
         {isLoggedIn ? (
           <Home></Home>
         ) : (

@@ -12,7 +12,6 @@ export default function SignIn(props) {
     };
     let response = await login(user);
     props.onUpdateStatus(response);
-
   };
 
 

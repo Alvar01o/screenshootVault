@@ -1,42 +1,53 @@
-import { Component } from "react";
+import React from "react";
 import { ReactComponent as ReactPersonLogo } from "./person.svg";
 import "./Header.css";
 import ProfileOptions from "./ProfileOptions";
-const headerMenu = ["Files", "Tags", "Explore"];
+const headerMenu = [
+  { name: "Files", route: "" },
+  { name: "Teams", route: "" },
+  { name: "Tags", route: "" },
+];
 
 const Header = () => {
-  const clickHandler = () => {
-    console.log("click");
+  const [isProfileOptionsActive, setIsProfileOptionsActive] =
+    React.useState(false);
+
+  const toggleProfileOptions = () => {
+    setIsProfileOptionsActive(!isProfileOptionsActive);
   };
-  
+
   return (
     <header>
-      <img
-        src="/logo512.png"
-        alt=""
-        width={30}
-        height={30}
-        className="logo"
-      />
-      <nav className="nav-menu">
-        <ul>
-          {headerMenu.map((item, index) => {
-            return (
-              <li key={index}>
-                <a href="" className="nav-item">{item}</a>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-      <div className="profile" onClick={clickHandler}>
-        <div className="profile-image">
+      <div className="header-content">
+        <img
+          src="/logo512.png"
+          alt=""
+          width={30}
+          height={30}
+          className="logo"
+        />
+        <nav className="nav-menu">
+          <ul>
+            {headerMenu.map((item, index) => {
+              return (
+                <li key={index}>
+                  <a href={item.route} className="nav-item">
+                    {item.name}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
+      <div className="profile">
+        <div className="profile-image" onClick={toggleProfileOptions}>
           <ReactPersonLogo />
-          <ProfileOptions/>
         </div>
+        <ProfileOptions isVisible={isProfileOptionsActive} />
       </div>
     </header>
   );
-}
+};
 
 export default Header;
