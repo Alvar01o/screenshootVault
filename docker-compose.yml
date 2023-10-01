@@ -1,29 +1,13 @@
 version: "3"
 
 services:
-  udp_receiver:
-    build: receiver/
-    volumes:
-      - ./receiver/vault/:/app/vault
+  storage:
+    image: minio/minio
     ports:
-      - "50000-50010:50000-50010/udp"
-  web:
-    build: .
-    command: python app/manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-      - redis
+      - "9000:9000"
     environment:
-      - DB_HOST=db
-      - DB_NAME=mydatabase
-      - DB_USER=mydatabaseuser
-      - DB_PASSWORD=mydatabasepassword
-      - REDIS_HOST=redis
-
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
   db:
     image: mongo
     restart: always
@@ -32,14 +16,9 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
 
   redis:
     image: redis
     restart: always
     ports:
       - "6379:6379"
-
-volumes:
-  mongodb_data:
