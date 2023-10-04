@@ -1,8 +1,11 @@
 import * as React from "react";
 import { login } from "./actions/auth-actions";
 import "./Sign-in.css";
+
 export default function SignIn(props) {
-    //add reducers for validations
+  const [activeView, setActiveView] = React.useState("login");
+
+  //add reducers for validations
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -13,27 +16,42 @@ export default function SignIn(props) {
     let response = await login(user);
     props.onUpdateStatus(response);
   };
-
+  const signUp = (event) => {
+    event.preventDefault();
+    setActiveView("register");
+  }
 
   return (
-    <form className="login" onSubmit={handleSubmit}>
-      <blockquote>
-        "Your Files, Our Fortress: Secure Storage Solutions"
-      </blockquote>
-      <img
-        src="/logo512.png"
-        alt=""
-        width={100}
-        height={100}
-        className="login-logo"
-      />
-      <input type="email" name="email" placeholder="Enter your email"></input>
-      <input
-        type="password"
-        name="password"
-        placeholder="Enter password"
-      ></input>
-      <button type="submit">Submit</button>
-    </form>
+    <>
+      {activeView === "login" ? (
+        <form className="login" onSubmit={handleSubmit}>
+          <blockquote>
+            "Your Files, Our Fortress: Secure Storage Solutions"
+          </blockquote>
+          <img
+            src="/logo512.png"
+            alt=""
+            width={100}
+            height={100}
+            className="login-logo"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+          ></input>
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter password"
+          ></input>
+          <button type="submit">Submit</button>
+          <br />
+          <span onClick={signUp}>Sign up</span>
+        </form>
+      ) : (
+
+      )}
+    </>
   );
 }
