@@ -12,24 +12,13 @@ body {
 button {
   font-family: 'Raleway', sans-serif !important;
 }
-div.domain-description {
-  position: absolute;
-    background-color: white;
-    padding: 10px;
-    width: 24%;
-    border-radius: 6px;
-    right: 10rem;
-}
 div.domain-preview {
   font-size: small;
 }
 span#domain-slug {
   font-weight: bold;
 }
-div.domain-description > span {
-  font-size: 12px;
-  color: #353535;
-}
+
 a.nav-item {
   font-size: 0.9375rem;
   line-height: 160%;
@@ -45,4 +34,19 @@ input[type="text"], input[type="email"], input[type="password"] {
 .submit-container {
   display: flex;
   justify-content: center;
+}
+.d-block {
+  display: block !important;
+}
+.d-none {
+  display: none !important;
+}
+input.valid {
+  border-color: #aaffaa;
+}
+input {
+  outline: none;
+}
+input.invalid {
+  border-color: red;
 }

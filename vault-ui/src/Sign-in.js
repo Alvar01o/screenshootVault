@@ -1,6 +1,7 @@
 import * as React from "react";
 import { login } from "./actions/auth-actions";
 import "./Sign-in.css";
+import RegisterForm from "./components/auth/RegisterForm";
 
 export default function SignIn(props) {
   const [activeView, setActiveView] = React.useState("login");
@@ -50,7 +51,7 @@ export default function SignIn(props) {
           <span onClick={signUp}>Sign up</span>
         </form>
       ) : (
-
+        <RegisterForm/>
       )}
     </>
   );

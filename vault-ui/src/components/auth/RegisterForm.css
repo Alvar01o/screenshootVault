@@ -1,0 +1,20 @@
+form.register {
+    background-color: #fff;
+    max-width: 21%;
+    margin-top: 5%;
+}
+form.register > input {
+    margin-top: 1rem;
+    padding-top:1rem;
+    padding-bottom: 1rem;
+}
+
+.register-title {
+    text-align: -webkit-center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 300;
+}
