@@ -16,6 +16,7 @@ svg#upload {
     fill: white;
 }
 .rightPanel {
+    height: 100%;
     right: 15px;
     display: flex;
     position: absolute;
